@@ -7,7 +7,7 @@
 1. Перейдите на [replit.com](https://replit.com) и войдите в аккаунт
 2. Нажмите кнопку **"Create Repl"**
 3. Выберите **"Import from GitHub"**
-4. Вставьте URL вашего репозитория: `https://github.com/Aygren/gost-search-app-`
+4. Вставьте URL вашего репозитория: `https://github.com/Aygren/gost-search-app`
 5. Выберите язык **"Node.js"**
 6. Нажмите **"Import from GitHub"**
 
