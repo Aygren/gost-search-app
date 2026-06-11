@@ -1,81 +1,126 @@
-# 📋 GOST Search App: Мультиплатформенная ИИ-система семантического поиска по стандартам ГОСТ
+# 🚘 PDD AI Assistant: Multiplatform AI Legal Ecosystem
 
-Профессиональное Full-stack MVP решение для автоматизации работы инженерных, конструкторских и проектных отделов. Система реализует продвинутую архитектуру **RAG (Retrieval-Augmented Generation)**, позволяя осуществлять умный семантический (по смыслу) поиск по тяжелым массивам нормативно-технической документации и ГОСТам.
+[Читать на русском языке](README.ru.md)
 
-Проект состоит из производительного Python-бэкенда, интегрированного с отечественными ИИ-технологиями, и независимого веб-интерфейса (фронтенда).
+An intelligent AI legal assistant designed for express analysis of traffic accident circumstances and automated legal consulting based on the current Russian Traffic Regulations (PDD).
 
----
-
-## 🚀 Ключевые особенности и ИИ-архитектура
-
-В отличие от классического поиска по ключевым словам, система понимает сложный инженерный контекст и синонимы благодаря глубокому анализу:
-
-1. **Парсинг и Чанкинг со сдвигом:** Модуль обработки PDF-документов разбивает тексты стандартов на смысловые абзацы с контролируемым перекрытием (overlap), предотвращая потерю контекста на стыках страниц.
-2. **Локальная векторизация (On-Premise Embeddings):** Для генерации векторов используется модель `all-MiniLM-L6-v2`. Индексация текста происходит в контуре приложения, что обеспечивает базовую конфиденциальность данных перед отправкой в облако.
-3. **Облачный векторный индекс:** Сгенерированные эмбеддинги передаются и хранятся в специализированной базе данных `Qdrant Cloud`, где развернут высокоскоростной поиск по косинусному сходству.
-4. **Анализ через Сбер GigaChat API:** Архитектура проекта ориентирована на импортозамещение. Вместо зарубежных аналогов, найденные релевантные куски ГОСТов передаются в модель **GigaChat**, которая выступает в роли ИИ-эксперта: анализирует требования, отсекает мусор и формирует итоговый структурированный ответ на техническом русском языке.
+The project was developed as a course assignment for the Stepik platform and is a distributed production-ready ecosystem consisting of a Streamlit web interface and a Telegram bot with integrated Voice-to-Text (STT) support.
 
 ---
 
-## 🛠 Стек технологий
-
-* **Бэкенд (Серверная логика):** Python 3.11+ (Развернут на **Replit**)
-* **Мозг системы (LLM Аналитик):** Сбер GigaChat API (глубокий анализ контекста)
-* **Векторизация текста:** Sentence-Transformers (`all-MiniLM-L6-v2`)
-* **Векторная база данных:** Qdrant Cloud (семантический поиск)
-* **Фронтенд (Интерфейс пользователя):** JavaScript / React / Next.js (Хостинг и деплой на **Vercel.com**)
-* **Локальная база данных:** SQLite (быстрое кеширование метаданных и ID документов)
+## 🔗 Live Project Links
+* **Project Website:** [Streamlit Web App](https://pdd-ai-assistant-9rkbzk5lgw3ku5jusctmh3.streamlit.app/)
+* **Telegram Bot:** [@AygrenPddBot](https://t.me/AygrenPddBot)
 
 ---
 
-## 📂 Структура репозитория
+## 🔥 Key Feature & AI Architecture
 
-```text
-gost-search-app/
-├── frontend/                # Клиентское веб-приложение (React/Next.js для деплоя на Vercel)
-├── src/                     # Серверная часть (Бэкенд на Python)
+Unlike basic RAG systems that perform simple keyword searching over documents, this project implements an advanced **Information Gathering Agent** pattern that emulates a real attorney qualification interview:
+
+1. **Multi-stage JSON Analysis:** The primary analyst model examines the situation context and validates it against an official traffic police (GIBBD) checklist (direction of travel, priority signs, traffic light states).
+2. **Road-logic Processing:** The AI identifies specific accident types (e.g., rear-end collisions, sideswipes) or traffic light behaviors at regulated intersections, dynamically adapting the interview script and reducing friction for a stressed driver.
+3. **Context Retention & Questioning:** If the data gathered is insufficient to provide a legal verdict, the agent generates precise follow-up questions while maintaining session state.
+4. **Hybrid Full-Text Search RAG:** Only after gathering 100% of the required facts (or after 2 full dialogue cycles) the query optimizer triggers to fetch relevant traffic regulations from the database for the final legal teardown.
+
+---
+
+## 🛠 Tech Stack
+
+* **Development Language:** Python 3.12
+* **Orchestration & AI Chains:** LangChain (context state management via `InMemoryChatMessageHistory`)
+* **AI Models (System Brain):** Mistral AI (`mistral-small-latest`) fine-tuned for hybrid output (free text + strict JSON mode)
+* **Speech Recognition (STT):** Groq API (`whisper-large-v3`) — sub-second audio byte transcription
+* **Knowledge Base & Search Backend:** Supabase (PostgreSQL). Built-in advanced linguistic full-text search (`tsvector`/`tsquery`) with automated Russian morphology lexeme generation.
+* **Interfaces:** Streamlit (Web frontend) and pyTelegramBotAPI (Telegram bot wrapper)
+
+---
+
+## 📂 Repository Structure
+
+~~~text
+pdd-ai-assistant/
+├── assets/                  # UI graphic assets (SVG logos)
+├── supabase/                # Database configuration
+│   └── migrations.sql       # Schema deployment, GIN indexes, and RPC text search function
+├── src/                     # Core application source code
 │   ├── __init__.py
-│   ├── db_utils.py          # Логика работы с локальной базой данных SQLite
-│   ├── embedding_utils.py   # Интеграция с Qdrant Cloud и генерация векторов
-│   ├── llm_utils.py         # Взаимодействие с API GigaChat (Сбер)
-│   └── pdf_utils.py         # Парсинг PDF-файлов, очистка текста и деление на чанки
-├── app.py                   # Главный файл интерфейса Streamlit и оркестрации RAG
-├── requirements.txt         # Список внешних зависимостей бэкенда
-└── README.md                # Документация проекта
-```
+│   ├── ai_assistant.py      # Core AI logic: JSON analyzer, RAG chains, Whisper STT integration
+│   ├── search_pdd.py        # Database lookup module utilizing Supabase FTS
+│   ├── tg_bot.py            # Telegram bot interface (processes text, voice, and commands)
+│   └── upload_to_supabase.py# Script for initial parsing and loading PDD rules into the cloud
+├── app.py                   # Streamlit web application entry point
+├── requirements.txt         # Project external dependencies list
+└── README.md                # English documentation
+~~~
 
 ---
 
-## 📈 Возможные точки роста (Перспективы развития проекта)
+## 🚀 Local Deployment Guide
 
-* **Внедрение OCR-модуля (Tesseract / EasyOCR):** Интеграция оптического распознавания символов для индексации старых отсканированных ГОСТов и чертежей, сохраненных внутри PDF в виде изображений.
-* **Переход на русскоязычную модель эмбеддингов:** Замена англоязычной `all-MiniLM` на специализированную модель (например, `rubert-tiny` или аналоги от Яндекс/Сбер), оптимизированную под тяжелую техническую терминологию на русском языке.
-* **Интеграция с корпоративными PDM/PLM системами:** Подключение поискового ИИ-движка напрямую к внутренним цифровым архивам заводов и конструкторских бюро для сквозного поиска по ТУ (техническим условиям) компании.
+Execute the following commands sequentially in your system terminal:
 
----
+### 1. Cloning and Environment Setup
+~~~bash
+# Clone the repository
+git clone https://github.com/Aygren/pdd-ai-assistant.git
+cd pdd-ai-assistant
 
-## 💻 Инструкция по локальному развертыванию
-
-### 1. Подготовка бэкенда
-```bash
-# Клонирование репозитория
-git clone https://github.com/Aygren/gost-search-app.git
-cd gost-search-app
-
-# Создание и активация виртуального окружения
+# Create and activate virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Для Windows: .venv\Scripts\activate
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
-```
+~~~
 
-### 2. Настройка окружения
-Задайте необходимые ключи доступа в переменных среды (или в панели Secrets на Replit / Vercel):
-* `QDRANT_HOST` и `QDRANT_API_KEY` — Доступ к облачной базе Qdrant Cloud.
-* `GIGACHAT_API_KEY` — Токен доступа к API Сбер GigaChat.
+### 2. Database Configuration (Supabase & Full-Text Search)
+The project utilizes native PostgreSQL linguistic engines to power search over regulations.
+1. Create a new database project inside your **Supabase** dashboard.
+2. Open the built-in **SQL Editor** in the Supabase control panel.
+3. Copy and run the code from the **[supabase/migrations.sql](supabase/migrations.sql)** file. This instantly sets up tables, GIN indexes, and the RPC morphology search functions.
+4. Run the setup script to populate the database with initial PDD rule chunks:
+~~~bash
+python -m src.upload_to_supabase
+~~~
 
-### 3. Запуск
-* Для запуска Python-интерфейса Streamlit: `streamlit run app.py`
-* Для запуска фронтенд-части перейдите в папку `frontend` и следуйте внутренней инструкции по развертыванию Next.js приложения на Vercel.
-```
+### 3. Environment Variables Configuration
+Create a `.env` file in the root directory of the project and specify your API credentials:
+~~~ini
+MISTRAL_API_KEY=your_mistral_api_key_here
+GROQ_API_KEY=your_groq_api_key_for_whisper
+SUPABASE_URL=your_supabase_project_url_here
+SUPABASE_KEY=your_supabase_anon_public_key_here
+TG_BOT_TOKEN=your_telegram_bot_token_from_botfather
+~~~
+
+### 4. Running Components Locally
+
+* **Run the Streamlit Web Application:**
+~~~bash
+streamlit run app.py
+~~~
+* **Run the Telegram Bot Interface:**
+~~~bash
+python -m src.tg_bot
+~~~
+
+---
+
+## ☁️ Production Cloud Deployment Architecture
+
+The system is designed as a distributed service tied to a unified backend:
+
+1. **Web Interface (Streamlit Cloud):** Deployed on Streamlit Cloud, synchronized with the `main` branch. Environment variables are securely isolated inside the platform's Advanced Settings.
+2. **Telegram Bot (Render.com):** Deployed as a background Web Service on Render. Auto-deploy is disabled for explicit developer version control.
+   * **Build Command:** `pip install -r requirements.txt`
+   * **Start Command:** `python -m http.server $PORT > /dev/null & python -m src.tg_bot`
+3. **Availability Optimization (Cron-Job.org):** To prevent the free Render container from falling asleep, an external scheduler pings the application's web port every 15 minutes.
+
+---
+
+## 🚀 Project Roadmap & Perspectives
+Based on the current MVP runtime analysis, the following areas have been identified for future development:
+* **"Call a Lawyer" Button:** Integrating human-handovers for complex gray-area road scenarios where LLMs hit logical boundary limitations (e.g., dynamic priority shifts).
+* **Driving School Integration (B2B):** Adapting the assistant as an interactive AI tutor helping students prepare for official state driving theory examinations.
+* **Additional API Integrations:** Connecting gateway channels to check traffic fines or calculate insurance (OSAGO) price estimates on the fly.
